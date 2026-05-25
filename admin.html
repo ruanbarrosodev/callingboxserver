@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADMIN - PAINEL</title>
+  <link rel="stylesheet" href="./public/css/admin.css" />
+</head>
+<body>
+  <section class="login" id="loginScreen">
+    <div class="putPassword">
+      <div class="login-badge">Admin</div>
+      <h2>Área restrita</h2>
+      <p class="login-subtitle">Digite a senha para acessar o painel.</p>
+      <p class="error hidden" id="loginError">Você não tem permissão para acessar.</p>
+
+      <form id="loginForm">
+        <input type="password" id="password" name="password" placeholder="Senha" autocomplete="current-password" />
+        <input type="submit" value="Entrar" />
+      </form>
+    </div>
+  </section>
+
+  <main id="adminPanel" class="hidden">
+    <form class="logoutForm" id="logoutForm">
+      <a class="btnMenuUp btn-blue" href="./ti.html">Chamados</a>
+      <button class="btnMenuUp btn-red" type="submit">SAIR</button>
+    </form>
+
+    <header class="page-header">
+      <p class="eyebrow">Painel administrativo</p>
+      <h1>Indicadores dos chamados</h1>
+      <p>Filtre, acompanhe métricas e gere relatórios da operação.</p>
+    </header>
+
+    <section class="panel-card export-card">
+      <form id="downloadForm">
+        <div class="select-group">
+          <label for="tipoChamado">Tipo de chamado</label>
+          <select id="tipoChamado" name="tipoChamado">
+            <option value="">Todos</option>
+            <option value="Software">Software</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Acesso">Acesso</option>
+          </select>
+        </div>
+
+        <div class="select-group">
+          <label for="status">Estado do chamado</label>
+          <select id="status" name="status">
+            <option value="">Todos</option>
+            <option value="Em espera">Em espera</option>
+            <option value="Em progresso">Em progresso</option>
+            <option value="Finalizado">Finalizado</option>
+          </select>
+        </div>
+
+        <div class="select-group period-group">
+          <label>Período do relatório</label>
+          <div class="radios">
+            <label><input type="radio" name="filterDownload" value="all" checked /> Todos</label>
+            <label><input type="radio" name="filterDownload" value="day" /> Dia</label>
+            <label><input type="radio" name="filterDownload" value="week" /> Semana</label>
+            <label><input type="radio" name="filterDownload" value="month" /> Mês</label>
+          </div>
+          <input id="dateSearch" type="date" name="dateSearch" />
+        </div>
+
+        <button type="submit" id="btnDownload">Baixar Excel</button>
+      </form>
+    </section>
+
+    <section class="panel-card filter-card">
+      <div class="radio-group">
+        <input id="dateControl" type="date" name="dateControl" />
+        <label><input type="radio" name="filterTime" value="dia" checked /> Dia</label>
+        <label><input type="radio" name="filterTime" value="semana" /> Semana</label>
+        <label><input type="radio" name="filterTime" value="mes" /> Mês</label>
+      </div>
+    </section>
+
+    <section class="metrics-grid">
+      <article class="info-card" id="countMetrica1">
+        <span class="metric-label">TMA</span>
+        <h3>Tempo Médio de Atendimento</h3>
+        <p>Soma do tempo total de atendimentos / Nº de chamados concluídos</p>
+        <div class="percent" data-metric="tma">--</div>
+      </article>
+
+      <article class="info-card" id="countMetrica2">
+        <span class="metric-label">TMR</span>
+        <h3>Tempo Médio de Resolução</h3>
+        <p>Tempo total para resolver os chamados / Nº total de chamados resolvidos</p>
+        <div class="percent" data-metric="tmr">--</div>
+      </article>
+
+      <article class="info-card" id="countMetrica3">
+        <span class="metric-label">NSU</span>
+        <h3>Nível de Satisfação</h3>
+        <p>% de respostas positivas nas pesquisas de satisfação</p>
+        <div class="percent" data-metric="satisfaction">--</div>
+      </article>
+
+      <article class="info-card" id="countTotal">
+        <span class="metric-label">TOTAL</span>
+        <h3>Chamados Registrados</h3>
+        <p>Quantidade de chamados registrados no período selecionado</p>
+        <div class="percent" data-metric="total">--</div>
+      </article>
+
+      <article class="info-card" id="countMetrica5">
+        <span class="metric-label">SLA</span>
+        <h3>SLA Atendido</h3>
+        <p>Nº de chamados dentro do prazo / Nº total de chamados</p>
+        <div class="percent" data-metric="sla">--</div>
+      </article>
+
+      <article class="info-card" id="countMetrica6">
+        <span class="metric-label">ALERTA</span>
+        <h3>Abertos há mais de 2 dias</h3>
+        <p>Chamados que precisam de atenção por tempo em aberto</p>
+        <div class="percent" data-metric="olderThanTwoDays">--</div>
+      </article>
+    </section>
+  </main>
+
+  <script src="./public/js/admin.js"></script>
+</body>
+</html>

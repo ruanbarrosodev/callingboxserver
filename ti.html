@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHAMADOS - PAINEL</title>
+  <link rel="stylesheet" href="./public/css/ti.css" />
+</head>
+<body>
+  <section class="login" id="loginScreen">
+    <div class="login-card">
+      <div class="login-badge">TI</div>
+      <h1>Acesso ao Painel</h1>
+      <p>Informe a senha para visualizar e gerenciar os chamados.</p>
+
+      <form id="loginForm">
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" placeholder="Digite a senha" autocomplete="current-password" />
+        <p class="error" id="loginError">Senha incorreta.</p>
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
+  </section>
+
+  <main class="app" id="appScreen" hidden>
+    <header class="topbar">
+      <a class="menu-button secondary" href="./admin.html">Administração</a>
+      <button class="menu-button danger" id="logoutButton" type="button">Sair</button>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Painel de atendimento</p>
+      <h1>Chamados</h1>
+      <p>Gerencie os chamados recebidos, filtre por estado/tipo e atualize o andamento.</p>
+    </section>
+
+    <section class="filters" aria-label="Filtros de chamados">
+      <div class="filter-field">
+        <label for="filterStatus">Estado</label>
+        <select id="filterStatus">
+          <option value="all">Todos</option>
+          <option value="Em espera">Em espera</option>
+          <option value="Em progresso">Em progresso</option>
+          <option value="Finalizado">Finalizado</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="filterType">Tipo</label>
+        <select id="filterType">
+          <option value="all">Todos</option>
+          <option value="Software">Software</option>
+          <option value="Hardware">Hardware</option>
+          <option value="Acesso">Acesso</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="callings">
+      <div class="section-title">
+        <h2>Últimos chamados</h2>
+        <span id="counter">0 registros</span>
+      </div>
+
+      <div class="table-wrap">
+        <div class="calling-row calling-head">
+          <section>Descrição</section>
+          <section>Horário</section>
+          <section>Setor</section>
+          <section>Usuário</section>
+          <section>Tipo</section>
+          <section>Estado</section>
+          <section>Alterar</section>
+        </div>
+
+        <div id="callingList"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./public/js/ti.js"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abrir chamado</title>
+  <link rel="stylesheet" href="./public/css/index.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Central de atendimento</p>
+        <h1>Abrir chamado</h1>
+        <p class="subtitle">Registre sua solicitação e acompanhe o andamento dos últimos chamados neste dispositivo.</p>
+      </div>
+      <div class="hero-card">
+        <span class="status-dot waiting"></span>
+        <strong id="currentTime">--</strong>
+        <small>Horário atual</small>
+      </div>
+    </section>
+
+    <section class="status-guide" aria-label="Legenda de status">
+      <article>
+        <span class="status-dot waiting"></span>
+        <div><strong>Em espera</strong><small>Não iniciado, aguardando na fila.</small></div>
+      </article>
+      <article>
+        <span class="status-dot progress"></span>
+        <div><strong>Em progresso</strong><small>Chamado iniciado e em atendimento.</small></div>
+      </article>
+      <article>
+        <span class="status-dot done"></span>
+        <div><strong>Finalizado</strong><small>Chamado encerrado.</small></div>
+      </article>
+    </section>
+
+    <section id="waitingCallWrapper" class="hidden"></section>
+
+    <section id="formWrapper" class="panel">
+      <div class="panel-header">
+        <h2>Novo chamado</h2>
+        <p>Preencha os dados abaixo para abrir uma solicitação.</p>
+      </div>
+
+      <form id="callForm" class="call-form">
+        <div class="field">
+          <label for="sector">Setor</label>
+          <input type="text" id="sector" name="sector" maxlength="100" placeholder="Ex: Financeiro" required>
+        </div>
+
+        <div class="field">
+          <label for="server">Usuário (nome.sobrenome)</label>
+          <input type="text" id="server" name="server" placeholder="Ex: joao.silva" required>
+        </div>
+
+        <div class="field">
+          <label for="type">Tipo de chamado</label>
+          <select id="type" name="type" required>
+            <option value="">Selecione</option>
+            <option value="Acesso">Acesso</option>
+            <option value="Software">Software</option>
+            <option value="Hardware">Hardware</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="time">Horário</label>
+          <input type="text" id="time" name="time" disabled>
+        </div>
+
+        <div class="field field-full">
+          <label for="description">Observação / descrição</label>
+          <textarea id="description" name="description" placeholder="Descreva o problema com detalhes..."></textarea>
+        </div>
+
+        <button type="submit" class="primary-btn">Abrir agora</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header row">
+        <div>
+          <h2>Chamados</h2>
+          <p>Últimos registros vinculados a este navegador.</p>
+        </div>
+        <button id="refreshBtn" class="ghost-btn" type="button">Atualizar</button>
+      </div>
+
+      <div class="table">
+        <div class="table-row table-head">
+          <span>Horário</span>
+          <span>Setor</span>
+          <span>Usuário</span>
+          <span>Estado</span>
+        </div>
+        <div id="callsList"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal hidden" id="successModal">
+    <div class="modal-content">
+      <button class="close-btn" type="button" aria-label="Fechar">&times;</button>
+      <h3>Chamado criado com sucesso</h3>
+      <div id="successContent"></div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="ratingModal">
+    <div class="modal-content">
+      <button class="close-btn" type="button" aria-label="Fechar">&times;</button>
+      <h3>Pesquisa de satisfação</h3>
+      <p>Como você avalia o atendimento?</p>
+
+      <form id="ratingForm">
+        <input type="hidden" id="ratingCallId" name="idCalling">
+
+        <div class="star-rating">
+          <input type="radio" name="nota" value="1" id="star1"><label for="star1"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="nota" value="2" id="star2"><label for="star2"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="nota" value="3" id="star3"><label for="star3"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="nota" value="4" id="star4"><label for="star4"><i class="fa-solid fa-star"></i></label>
+          <input type="radio" name="nota" value="5" id="star5"><label for="star5"><i class="fa-solid fa-star"></i></label>
+        </div>
+
+        <button type="submit" class="primary-btn">Enviar avaliação</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="./public/js/index.js"></script>
+</body>
+</html>
