@@ -31,7 +31,7 @@
     <section class="hero">
       <p class="eyebrow">Painel de atendimento</p>
       <h1>Chamados</h1>
-      <p>Gerencie os chamados recebidos, filtre por estado/tipo e atualize o andamento.</p>
+      <p>Gerencie os chamados recebidos, filtre por estado/tipo/data e atualize o andamento.</p>
     </section>
 
     <section class="filters" aria-label="Filtros de chamados">
@@ -54,11 +54,27 @@
           <option value="Acesso">Acesso</option>
         </select>
       </div>
+
+      <div class="filter-field">
+        <label for="filterStartDate">Data inicial</label>
+        <input type="date" id="filterStartDate">
+      </div>
+
+      <div class="filter-field">
+        <label for="filterEndDate">Data final</label>
+        <input type="date" id="filterEndDate">
+      </div>
+
+      <button class="menu-button refresh" id="refreshButton" type="button">Atualizar</button>
     </section>
 
     <section class="callings">
       <div class="section-title">
-        <h2>Últimos chamados</h2>
+        <div>
+          <h2>Últimos chamados</h2>
+          <p id="listMode">Sem filtros: exibindo os 10 mais recentes.</p>
+        </div>
+
         <span id="counter">0 registros</span>
       </div>
 
@@ -74,6 +90,12 @@
         </div>
 
         <div id="callingList"></div>
+      </div>
+
+      <div class="pagination hidden" id="pagination">
+        <button id="prevPage" type="button">Anterior</button>
+        <span id="pageInfo">Página 1</span>
+        <button id="nextPage" type="button">Próxima</button>
       </div>
     </section>
   </main>
