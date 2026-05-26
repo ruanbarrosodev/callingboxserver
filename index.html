@@ -36,15 +36,16 @@
         <div><strong>Finalizado</strong><small>Chamado encerrado.</small></div>
       </article>
     </section>
+    <!-- <section id="waitingCallWrapper" class="hidden"></section> -->
 
-    <section id="waitingCallWrapper" class="hidden"></section>
-
+    
+    <div id="openCallMessage" class="open-call-message hidden"></div>
     <section id="formWrapper" class="panel">
       <div class="panel-header">
         <h2>Novo chamado</h2>
         <p>Preencha os dados abaixo para abrir uma solicitação.</p>
       </div>
-
+      
       <form id="callForm" class="call-form">
         <div class="field">
           <label for="sector">Setor</label>
@@ -111,22 +112,39 @@
 
   <div class="modal hidden" id="ratingModal">
     <div class="modal-content">
-      <button class="close-btn" type="button" aria-label="Fechar">&times;</button>
+      <button class="close-btn" type="button">&times;</button>
+
       <h3>Pesquisa de satisfação</h3>
-      <p>Como você avalia o atendimento?</p>
 
       <form id="ratingForm">
-        <input type="hidden" id="ratingCallId" name="idCalling">
+        <input type="hidden" id="ratingCallId">
 
         <div class="star-rating">
-          <input type="radio" name="nota" value="1" id="star1"><label for="star1"><i class="fa-solid fa-star"></i></label>
-          <input type="radio" name="nota" value="2" id="star2"><label for="star2"><i class="fa-solid fa-star"></i></label>
-          <input type="radio" name="nota" value="3" id="star3"><label for="star3"><i class="fa-solid fa-star"></i></label>
-          <input type="radio" name="nota" value="4" id="star4"><label for="star4"><i class="fa-solid fa-star"></i></label>
-          <input type="radio" name="nota" value="5" id="star5"><label for="star5"><i class="fa-solid fa-star"></i></label>
-        </div>
+          <input type="radio" name="nota" value="1" id="star1">
+          <label for="star1">★</label>
 
-        <button type="submit" class="primary-btn">Enviar avaliação</button>
+          <input type="radio" name="nota" value="2" id="star2">
+          <label for="star2">★</label>
+
+          <input type="radio" name="nota" value="3" id="star3">
+          <label for="star3">★</label>
+
+          <input type="radio" name="nota" value="4" id="star4">
+          <label for="star4">★</label>
+
+          <input type="radio" name="nota" value="5" id="star5">
+          <label for="star5">★</label>
+        </div>
+        <span id="ratingCallInfo" class="rating-call-info"></span>
+        <textarea
+          id="ratingDescription"
+          placeholder="Observação opcional"
+        ></textarea>
+
+
+        <button type="submit">
+          Enviar avaliação
+        </button>
       </form>
     </div>
   </div>

@@ -1,5 +1,4 @@
 const API_BASE = "/.netlify/functions";
-const SESSION_KEY = "ti_panel_logged";
 const TEMP_PASSWORD = "freedom";
 
 const loginScreen = document.getElementById("loginScreen");

@@ -28,20 +28,69 @@ exports.handler = async (event) => {
         .sort({ time: -1 })
         .limit(5)
         .toArray();
+      const finalizadosSemNota = await collection
+        .find({
+          user_key: userKey,
+          status: "Finalizado",
+          nota: null
+        })
+        .sort({ time: -1 })
+        .toArray();
+
+      let pendingRating = null;
+
+      if (finalizadosSemNota.length > 0) {
+        pendingRating = finalizadosSemNota[0];
+
+        const antigos = finalizadosSemNota.slice(1);
+
+        if (antigos.length > 0) {
+          await collection.updateMany(
+            {
+              _id: {
+                $in: antigos.map(call => call._id)
+              }
+            },
+            {
+              $set: {
+                nota: 5
+              }
+            }
+          );
+        }
+      }
 
       return {
         statusCode: 200,
         body: JSON.stringify({
           success: true,
-          calls
+          calls,
+          pendingRating
         })
       };
+
     }
 
     // POST - criar chamado
     if (event.httpMethod === "POST") {
       const body = JSON.parse(event.body);
+      const aberto = await collection.findOne({
+        user_key: body.user_key,
+        status: {
+          $in: ["Em espera", "Em progresso"]
+        }
+      });
 
+      if (aberto) {
+        return {
+          statusCode: 409,
+          body: JSON.stringify({
+            success: false,
+            message: "Você já possui um chamado em andamento.",
+            call: aberto
+          })
+        };
+      }
       if (!body.sector || !body.server || !body.type || !body.user_key) {
         return {
           statusCode: 400,
@@ -100,4 +149,6 @@ exports.handler = async (event) => {
       })
     };
   }
+
+
 };
