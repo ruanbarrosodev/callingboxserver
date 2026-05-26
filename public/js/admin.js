@@ -1,25 +1,51 @@
-const ADMIN_PASSWORD = "freedom";
-const AUTH_KEY = "helpdesk_admin_auth";
+const API_BASE = "/.netlify/functions";
 
-const loginScreen = document.getElementById("loginScreen");
-const adminPanel = document.getElementById("adminPanel");
-const loginForm = document.getElementById("loginForm");
-const logoutForm = document.getElementById("logoutForm");
-const loginError = document.getElementById("loginError");
+const loginScreen = document.querySelector("#loginScreen");
+const adminPanel = document.querySelector("#adminPanel");
+const loginForm = document.querySelector("#loginForm");
+const loginError = document.querySelector("#loginError");
+const logoutButton = document.querySelector("#logoutButton");
 
-const mockMetrics = {
-  tma: "18 min",
-  tmr: "2h 35m",
-  satisfaction: "92%",
-  total: "37",
-  sla: "86%",
-  olderThanTwoDays: "4"
+const startDateInput = document.querySelector("#startDate");
+const endDateInput = document.querySelector("#endDate");
+const applyFilterButton = document.querySelector("#applyFilter");
+const resetWeekButton = document.querySelector("#resetWeek");
+const recordsUsed = document.querySelector("#recordsUsed");
+const periodText = document.querySelector("#periodText");
+
+const metricEls = {
+  tma: document.querySelector("[data-metric='tma']"),
+  tmr: document.querySelector("[data-metric='tmr']"),
+  satisfaction: document.querySelector("[data-metric='satisfaction']"),
+  total: document.querySelector("[data-metric='total']"),
+  sla: document.querySelector("[data-metric='sla']"),
+  olderThanTwoDays: document.querySelector("[data-metric='olderThanTwoDays']")
 };
 
-function showPanel() {
+function toInputDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function setCurrentWeek() {
+  const today = new Date();
+  const day = today.getDay() || 7;
+
+  const start = new Date(today);
+  start.setDate(today.getDate() - day + 1);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  startDateInput.value = toInputDate(start);
+  endDateInput.value = toInputDate(end);
+}
+
+function showApp() {
   loginScreen.classList.add("hidden");
   adminPanel.classList.remove("hidden");
-  loadMetrics();
 }
 
 function showLogin() {
@@ -27,68 +53,115 @@ function showLogin() {
   loginScreen.classList.remove("hidden");
 }
 
-function isLoggedIn() {
-  return localStorage.getItem(AUTH_KEY) === "true";
+function formatDateBr(value) {
+  if (!value) return "--";
+  return new Date(`${value}T00:00:00`).toLocaleDateString("pt-BR");
 }
 
-loginForm.addEventListener("submit", async (event) => {
+function setLoading() {
+  Object.values(metricEls).forEach(el => {
+    if (el) el.textContent = "...";
+  });
+
+  recordsUsed.textContent = "...";
+  periodText.textContent = "Carregando período...";
+}
+
+function setError() {
+  Object.values(metricEls).forEach(el => {
+    if (el) el.textContent = "Erro";
+  });
+
+  recordsUsed.textContent = "Erro";
+  periodText.textContent = "Não foi possível carregar as métricas.";
+}
+
+async function fazerLogin(event) {
   event.preventDefault();
 
-  const password = document.getElementById("password").value.trim();
+  const password = document.querySelector("#password").value;
 
-  // Temporário: valida localmente.
-  // Depois dá pra trocar por fetch("/.netlify/functions/admin-login").
-  if (password.toLowerCase() === ADMIN_PASSWORD) {
-    localStorage.setItem(AUTH_KEY, "true");
-    loginError.classList.add("hidden");
-    showPanel();
+  const response = await fetch(`${API_BASE}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ password })
+  });
+
+  const result = await response.json();
+
+  if (!result.success) {
+    loginError.classList.remove("hidden");
     return;
   }
 
-  loginError.classList.remove("hidden");
-});
+  localStorage.setItem("admin_logged", "true");
+  loginError.classList.add("hidden");
 
-logoutForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  localStorage.removeItem(AUTH_KEY);
+  showApp();
+  carregarMetricas();
+}
+
+function logout() {
+  localStorage.removeItem("admin_logged");
+  loginForm.reset();
   showLogin();
-});
+}
 
-async function loadMetrics() {
+async function carregarMetricas() {
+  setLoading();
+
+  const params = new URLSearchParams();
+
+  if (startDateInput.value) {
+    params.set("startDate", startDateInput.value);
+  }
+
+  if (endDateInput.value) {
+    params.set("endDate", endDateInput.value);
+  }
+
   try {
-    // Futuro:
-    // const response = await fetch("/.netlify/functions/admin-metrics");
-    // const metrics = await response.json();
+    const response = await fetch(`${API_BASE}/admin-metrics?${params.toString()}`);
+    const result = await response.json();
 
-    const metrics = mockMetrics;
+    if (!result.success) {
+      throw new Error(result.message || "Erro ao carregar métricas");
+    }
 
-    document.querySelectorAll("[data-metric]").forEach((element) => {
-      const key = element.dataset.metric;
-      element.textContent = metrics[key] ?? "--";
-    });
+    metricEls.tma.textContent = result.metrics.tma ?? "--";
+    metricEls.tmr.textContent = result.metrics.tmr ?? "--";
+    metricEls.satisfaction.textContent = result.metrics.satisfaction ?? "--";
+    metricEls.total.textContent = result.metrics.total ?? "--";
+    metricEls.sla.textContent = result.metrics.sla ?? "--";
+    metricEls.olderThanTwoDays.textContent = result.metrics.olderThanTwoDays ?? "--";
+
+    recordsUsed.textContent = result.recordsUsed ?? 0;
+    periodText.textContent = `Período: ${formatDateBr(result.period.startDate)} até ${formatDateBr(result.period.endDate)}`;
   } catch (error) {
-    console.error("Erro ao carregar métricas:", error);
+    console.error(error);
+    setError();
   }
 }
 
-document.getElementById("downloadForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
+loginForm.addEventListener("submit", fazerLogin);
+logoutButton.addEventListener("click", logout);
+applyFilterButton.addEventListener("click", carregarMetricas);
 
-  const data = new FormData(event.currentTarget);
-  const params = new URLSearchParams(data);
-
-  // Futuro real:
-  // window.location.href = `/.netlify/functions/generate-excel?${params.toString()}`;
-
-  alert(`Download simulado. Filtros: ${params.toString() || "nenhum"}`);
+resetWeekButton.addEventListener("click", () => {
+  setCurrentWeek();
+  carregarMetricas();
 });
 
-document.querySelectorAll("input[name='filterTime'], #dateControl").forEach((control) => {
-  control.addEventListener("change", loadMetrics);
-});
+startDateInput.addEventListener("change", carregarMetricas);
+endDateInput.addEventListener("change", carregarMetricas);
 
-if (isLoggedIn()) {
-  showPanel();
+setCurrentWeek();
+
+if (localStorage.getItem("admin_logged") === "true") {
+  showApp();
+  carregarMetricas();
 } else {
   showLogin();
 }

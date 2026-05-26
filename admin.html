@@ -8,118 +8,97 @@
 </head>
 <body>
   <section class="login" id="loginScreen">
-    <div class="putPassword">
+    <div class="login-card">
       <div class="login-badge">Admin</div>
-      <h2>Área restrita</h2>
-      <p class="login-subtitle">Digite a senha para acessar o painel.</p>
-      <p class="error hidden" id="loginError">Você não tem permissão para acessar.</p>
+      <h1>Área restrita</h1>
+      <p>Digite a senha para acessar os indicadores dos chamados.</p>
 
       <form id="loginForm">
-        <input type="password" id="password" name="password" placeholder="Senha" autocomplete="current-password" />
-        <input type="submit" value="Entrar" />
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" placeholder="Digite a senha" autocomplete="current-password" />
+        <p class="error hidden" id="loginError">Você não tem permissão para acessar.</p>
+        <button type="submit">Entrar</button>
       </form>
     </div>
   </section>
 
-  <main id="adminPanel" class="hidden">
-    <form class="logoutForm" id="logoutForm">
-      <a class="btnMenuUp btn-blue" href="./ti.html">Chamados</a>
-      <button class="btnMenuUp btn-red" type="submit">SAIR</button>
-    </form>
-
-    <header class="page-header">
-      <p class="eyebrow">Painel administrativo</p>
-      <h1>Indicadores dos chamados</h1>
-      <p>Filtre, acompanhe métricas e gere relatórios da operação.</p>
+  <main class="app hidden" id="adminPanel">
+    <header class="topbar">
+      <a class="menu-button secondary" href="./ti.html">Chamados</a>
+      <button class="menu-button danger" id="logoutButton" type="button">Sair</button>
     </header>
 
-    <section class="panel-card export-card">
-      <form id="downloadForm">
-        <div class="select-group">
-          <label for="tipoChamado">Tipo de chamado</label>
-          <select id="tipoChamado" name="tipoChamado">
-            <option value="">Todos</option>
-            <option value="Software">Software</option>
-            <option value="Hardware">Hardware</option>
-            <option value="Acesso">Acesso</option>
-          </select>
-        </div>
-
-        <div class="select-group">
-          <label for="status">Estado do chamado</label>
-          <select id="status" name="status">
-            <option value="">Todos</option>
-            <option value="Em espera">Em espera</option>
-            <option value="Em progresso">Em progresso</option>
-            <option value="Finalizado">Finalizado</option>
-          </select>
-        </div>
-
-        <div class="select-group period-group">
-          <label>Período do relatório</label>
-          <div class="radios">
-            <label><input type="radio" name="filterDownload" value="all" checked /> Todos</label>
-            <label><input type="radio" name="filterDownload" value="day" /> Dia</label>
-            <label><input type="radio" name="filterDownload" value="week" /> Semana</label>
-            <label><input type="radio" name="filterDownload" value="month" /> Mês</label>
-          </div>
-          <input id="dateSearch" type="date" name="dateSearch" />
-        </div>
-
-        <button type="submit" id="btnDownload">Baixar Excel</button>
-      </form>
+    <section class="hero">
+      <p class="eyebrow">Painel administrativo</p>
+      <h1>Indicadores dos chamados</h1>
+      <p>As métricas carregam inicialmente a semana atual. Ajuste o período para recalcular os dados.</p>
     </section>
 
-    <section class="panel-card filter-card">
-      <div class="radio-group">
-        <input id="dateControl" type="date" name="dateControl" />
-        <label><input type="radio" name="filterTime" value="dia" checked /> Dia</label>
-        <label><input type="radio" name="filterTime" value="semana" /> Semana</label>
-        <label><input type="radio" name="filterTime" value="mes" /> Mês</label>
+    <section class="filters" aria-label="Filtros de período">
+      <div class="filter-field">
+        <label for="startDate">Data inicial</label>
+        <input type="date" id="startDate" />
       </div>
+
+      <div class="filter-field">
+        <label for="endDate">Data final</label>
+        <input type="date" id="endDate" />
+      </div>
+
+      <button class="primary-btn" id="applyFilter" type="button">Aplicar período</button>
+      <button class="ghost-btn" id="resetWeek" type="button">Semana atual</button>
+      <button class="ghost-btn" id="downloadExcel" type="button">Download Planilha</button>
+    </section>
+
+    <section class="summary-card">
+      <div>
+        <span class="summary-label">Registros usados no cálculo</span>
+        <strong id="recordsUsed">--</strong>
+      </div>
+      <p id="periodText">Período: --</p>
     </section>
 
     <section class="metrics-grid">
-      <article class="info-card" id="countMetrica1">
+      <article class="metric-card">
         <span class="metric-label">TMA</span>
-        <h3>Tempo Médio de Atendimento</h3>
-        <p>Soma do tempo total de atendimentos / Nº de chamados concluídos</p>
-        <div class="percent" data-metric="tma">--</div>
+        <h2>Tempo Médio de Atendimento</h2>
+        <p>Média do tempo entre criação e finalização dos chamados finalizados.</p>
+        <strong data-metric="tma">--</strong>
       </article>
 
-      <article class="info-card" id="countMetrica2">
+      <article class="metric-card">
         <span class="metric-label">TMR</span>
-        <h3>Tempo Médio de Resolução</h3>
-        <p>Tempo total para resolver os chamados / Nº total de chamados resolvidos</p>
-        <div class="percent" data-metric="tmr">--</div>
+        <h2>Tempo Médio de Resolução</h2>
+        <p>Média do tempo entre criação e entrada em progresso.</p>
+        <strong data-metric="tmr">--</strong>
       </article>
 
-      <article class="info-card" id="countMetrica3">
+      <article class="metric-card">
         <span class="metric-label">NSU</span>
-        <h3>Nível de Satisfação</h3>
-        <p>% de respostas positivas nas pesquisas de satisfação</p>
-        <div class="percent" data-metric="satisfaction">--</div>
+        <h2>Nível de Satisfação</h2>
+        <p>Média das notas recebidas, convertida para percentual.</p>
+        <strong data-metric="satisfaction">--</strong>
       </article>
 
-      <article class="info-card" id="countTotal">
+      <article class="metric-card">
         <span class="metric-label">TOTAL</span>
-        <h3>Chamados Registrados</h3>
-        <p>Quantidade de chamados registrados no período selecionado</p>
-        <div class="percent" data-metric="total">--</div>
+        <h2>Chamados Registrados</h2>
+        <p>Total de chamados criados dentro do período selecionado.</p>
+        <strong data-metric="total">--</strong>
       </article>
 
-      <article class="info-card" id="countMetrica5">
+      <article class="metric-card">
         <span class="metric-label">SLA</span>
-        <h3>SLA Atendido</h3>
-        <p>Nº de chamados dentro do prazo / Nº total de chamados</p>
-        <div class="percent" data-metric="sla">--</div>
+        <h2>SLA Atendido</h2>
+        <p>Percentual de chamados finalizados em até 2 dias.</p>
+        <strong data-metric="sla">--</strong>
       </article>
 
-      <article class="info-card" id="countMetrica6">
+      <article class="metric-card alert-card">
         <span class="metric-label">ALERTA</span>
-        <h3>Abertos há mais de 2 dias</h3>
-        <p>Chamados que precisam de atenção por tempo em aberto</p>
-        <div class="percent" data-metric="olderThanTwoDays">--</div>
+        <h2>Abertos há mais de 2 dias</h2>
+        <p>Chamados ainda não finalizados e criados há mais de 2 dias.</p>
+        <strong data-metric="olderThanTwoDays">--</strong>
       </article>
     </section>
   </main>
